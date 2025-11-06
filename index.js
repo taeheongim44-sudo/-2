@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits, EmbedBuilder } from "discord.js";
 import "dotenv/config";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import googleTTS from "google-tts-api";
 import fetch from "node-fetch";
 import {
@@ -62,8 +63,10 @@ async function playTTSInConnection(voiceChannel, text) {
 // --------------------- Puppeteer ---------------------
 async function openBrowser() {
   return puppeteer.launch({
-    headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
   });
 }
 
@@ -244,5 +247,6 @@ client.once("ready", () => {
   console.log(`✅ ${client.user.tag} 실행됨`);
   setInterval(() => console.log("⏱️ 스케줄 체크 중..."), 1000 * 60 * 60);
 });
+
 
 client.login(TOKEN);
